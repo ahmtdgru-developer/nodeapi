@@ -8,4 +8,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEmail({}, { message: 'geçerli bir e-posta adresi girilmeli' })
   email?: string;
+
+  @IsOptional()
+  @IsString({ message: 'telefon metin tipinde olmalı' })
+  phone?: string;
 }

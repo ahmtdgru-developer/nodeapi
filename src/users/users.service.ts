@@ -1,24 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  private users = [
-    { id: 1, name: 'Ahmet', email: 'ahmet@example.com' },
-    { id: 2, name: 'Ayse', email: 'ayse@example.com' },
+  private users: User[] = [
+    {
+      id: 1,
+      name: 'Ahmet',
+      email: 'ahmet@example.com',
+      phone: '+90 555 111 11 11',
+    },
+    {
+      id: 2,
+      name: 'Ayse',
+      email: 'ayse@example.com',
+      phone: '+90 555 222 22 22',
+    },
   ];
 
-  findAll() {
+  findAll(): User[] {
     return this.users;
   }
 
-  findOne(id: number) {
+  findOne(id: number): User | undefined {
     return this.users.find((user) => user.id === id);
   }
 
-  create(createUserDto: CreateUserDto) {
-    const newUser = {
+  create(createUserDto: CreateUserDto): User {
+    const newUser: User = {
       id: this.users.length + 1,
       ...createUserDto,
     };
@@ -27,7 +38,7 @@ export class UsersService {
     return newUser;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUserDto: UpdateUserDto): User | null {
     const user = this.users.find((item) => item.id === id);
 
     if (!user) {
@@ -38,7 +49,7 @@ export class UsersService {
     return user;
   }
 
-  remove(id: number) {
+  remove(id: number): User | null {
     const index = this.users.findIndex((item) => item.id === id);
 
     if (index === -1) {

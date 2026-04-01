@@ -7,4 +7,8 @@ export class CreateUserDto {
 
   @IsEmail({}, { message: 'geçerli bir e-posta adresi girilmeli' })
   email: string;
+
+  @IsString({ message: 'telefon metin tipinde olmalı' })
+  @IsNotEmpty({ message: 'telefon boş bırakılamaz' })
+  phone: string;
 }
