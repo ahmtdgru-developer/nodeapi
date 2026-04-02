@@ -14,7 +14,9 @@ import { UserPublicProfileDto } from './dto/user-public-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersMapper } from './users.mapper';
 import { UsersService } from './users.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
