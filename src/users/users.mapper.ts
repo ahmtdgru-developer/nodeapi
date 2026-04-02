@@ -8,6 +8,7 @@ export class UsersMapper {
     return {
       id: user.id,
       name: user.name,
+      phone: user.phone,
     };
   }
 

@@ -1,4 +1,4 @@
-﻿import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsPhoneNumber } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -10,6 +10,6 @@ export class UpdateUserDto {
   email?: string;
 
   @IsOptional()
-  @IsString({ message: 'telefon metin tipinde olmalı' })
+  @IsPhoneNumber('TR', { message: 'geçerli bir telefon numarası girilmeli' })
   phone?: string;
 }

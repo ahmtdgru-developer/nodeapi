@@ -1,4 +1,4 @@
-﻿import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+﻿import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsString({ message: 'isim metin tipinde olmalı' })
@@ -8,7 +8,6 @@ export class CreateUserDto {
   @IsEmail({}, { message: 'geçerli bir e-posta adresi girilmeli' })
   email: string;
 
-  @IsString({ message: 'telefon metin tipinde olmalı' })
-  @IsNotEmpty({ message: 'telefon boş bırakılamaz' })
+  @IsPhoneNumber('TR', { message: 'geçerli bir telefon numarası girilmeli' })
   phone: string;
 }
