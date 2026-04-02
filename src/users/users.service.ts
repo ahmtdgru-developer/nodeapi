@@ -16,25 +16,29 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    const user = this.userRepository.findOne({ where: { id } });
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['comments'],
+    });
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı!');
     }
     return user;
   }
 
-  create(createUserDto: CreateUserDto) {
-    return this.userRepository.save(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    return await this.userRepository.save(createUserDto);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(id, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.findOne(id); // Önce kullanıcı var mı diye bakıyoruz (asenkron)
+    return await this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number) {
-    const user = this.findOne(id);
-    this.userRepository.delete(id);
+  async remove(id: number) {
+    const user = await this.findOne(id); // Önce kullanıcıyı buluyoruz (asenkron)
+    await this.userRepository.delete(id);
     return user;
   }
 }

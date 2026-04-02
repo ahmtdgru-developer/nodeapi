@@ -18,4 +18,10 @@ export class UserListItemDto {
     example: '+90 555 111 11 11',
   })
   phone: string;
+
+  @ApiProperty({
+    description: 'Kullanıcının e-posta adresi',
+    example: 'Email Adresi',
+  })
+  email: string;
 }

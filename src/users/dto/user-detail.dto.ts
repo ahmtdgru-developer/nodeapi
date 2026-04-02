@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Comment } from "../../comments/entities/comment.entity";
 
 export class UserDetailDto {
   @ApiProperty({
@@ -24,4 +25,10 @@ export class UserDetailDto {
     example: '+90 555 111 11 11',
   })
   phone: string;
+
+  @ApiProperty({
+    description: 'Kullanıcının yorumları',
+    example: [],
+  })
+  comments: Comment[];
 }

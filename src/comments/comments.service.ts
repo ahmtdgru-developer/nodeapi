@@ -2,43 +2,40 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CommentsService {
-  private comments: Comment[] = [];
+  constructor(
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
+  ) {}
 
-  create(createCommentDto: CreateCommentDto) {
-    const comment: Comment = {
-      id: this.comments.length + 1,
-      ...createCommentDto,
-    };
-
-    this.comments.push(comment);
-
-    return comment;
+  async create(createCommentDto: CreateCommentDto) {
+    return await this.commentRepository.save(createCommentDto);
   }
 
-  findAll() {
-    return this.comments;
+  async findAll() {
+    return await this.commentRepository.find();
   }
 
-  findOne(id: number) {
-    const comment = this.comments.find((comment) => comment.id === id);
+  async findOne(id: number) {
+    const comment = await this.commentRepository.findOne({ where: { id } });
     if (!comment) {
       throw new NotFoundException('Yorum bulunamadı!');
     }
     return comment;
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    const comment = this.findOne(id);
-    Object.assign(comment, updateCommentDto);
-    return comment;
+  async update(id: number, updateCommentDto: UpdateCommentDto) {
+    await this.findOne(id);
+    return await this.commentRepository.update(id, updateCommentDto);
   }
 
-  remove(id: number) {
-    const comment = this.findOne(id);
-    this.comments = this.comments.filter((item) => item.id !== id);
+  async remove(id: number) {
+    const comment = await this.findOne(id);
+    await this.commentRepository.delete(id);
     return comment;
   }
 }

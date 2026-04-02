@@ -9,6 +9,7 @@ export class UsersMapper {
       id: user.id,
       name: user.name,
       phone: user.phone,
+      email: user.email,
     };
   }
 
@@ -22,6 +23,7 @@ export class UsersMapper {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      comments: user.comments,
     };
   }
 

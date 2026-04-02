@@ -10,27 +10,27 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  async create(@Body() createCommentDto: CreateCommentDto) {
+    return await this.commentsService.create(createCommentDto);
   }
 
   @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  async findAll() {
+    return await this.commentsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.commentsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
+  async update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
+    return await this.commentsService.update(+id, updateCommentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.commentsService.remove(+id);
   }
 }

@@ -22,61 +22,47 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get()
-  findAll(): UserListItemDto[] {
-    return UsersMapper.toList(this.usersService.findAll());
+  async findAll(): Promise<UserListItemDto[]> {
+    const users = await this.usersService.findAll();
+    return UsersMapper.toList(users);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): UserDetailDto | null {
-    const user = this.usersService.findOne(Number(id));
-
-    if (!user) {
-      return null;
-    }
-
+  async findOne(@Param('id') id: string): Promise<UserDetailDto> {
+    const user = await this.usersService.findOne(Number(id));
     return UsersMapper.toDetail(user);
   }
 
   @Get(':id/public')
-  findPublicProfile(@Param('id') id: string): UserPublicProfileDto | null {
-    const user = this.usersService.findOne(Number(id));
-
-    if (!user) {
-      return null;
-    }
-
+  async findPublicProfile(@Param('id') id: string): Promise<UserPublicProfileDto> {
+    const user = await this.usersService.findOne(Number(id));
     return UsersMapper.toPublicProfile(user);
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): UserDetailDto {
-    const user = this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserDetailDto> {
+    const user = await this.usersService.create(createUserDto);
     return UsersMapper.toDetail(user);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): UserDetailDto | null {
+  ): Promise<UserDetailDto> {
     console.log(updateUserDto);
-    const user = this.usersService.update(Number(id), updateUserDto);
-
-    if (!user) {
-      return null;
-    }
-
+    // Note: TypeORM update returns UpdateResult, not the entity. 
+    // For simplicity, we fetch it again or service should return it.
+    // Our service currently returns the result of .update() which is UpdateResult.
+    // Let's fix service or handle it here.
+    await this.usersService.update(Number(id), updateUserDto);
+    const user = await this.usersService.findOne(Number(id));
     return UsersMapper.toDetail(user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): UserDetailDto | null {
-    const user = this.usersService.remove(Number(id));
-
-    if (!user) {
-      return null;
-    }
-
+  async remove(@Param('id') id: string): Promise<UserDetailDto> {
+    const user = await this.usersService.remove(Number(id));
     return UsersMapper.toDetail(user);
   }
 }
