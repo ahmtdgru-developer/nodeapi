@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -24,8 +24,12 @@ export class UsersService {
     return this.users;
   }
 
-  findOne(id: number): User | undefined {
-    return this.users.find((user) => user.id === id);
+  findOne(id: number): User {
+    const user = this.users.find((user) => user.id === id);
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı!');
+    }
+    return user;
   }
 
   create(createUserDto: CreateUserDto): User {
@@ -38,26 +42,15 @@ export class UsersService {
     return newUser;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): User | null {
-    const user = this.users.find((item) => item.id === id);
-
-    if (!user) {
-      return null;
-    }
-
+  update(id: number, updateUserDto: UpdateUserDto): User {
+    const user = this.findOne(id);
     Object.assign(user, updateUserDto);
     return user;
   }
 
-  remove(id: number): User | null {
-    const index = this.users.findIndex((item) => item.id === id);
-
-    if (index === -1) {
-      return null;
-    }
-
-    const deletedUser = this.users[index];
-    this.users.splice(index, 1);
-    return deletedUser;
+  remove(id: number): User {
+    const user = this.findOne(id);
+    this.users = this.users.filter((item) => item.id !== id);
+    return user;
   }
 }
