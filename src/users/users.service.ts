@@ -2,55 +2,39 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    {
-      id: 1,
-      name: 'Ahmet',
-      email: 'ahmet@example.com',
-      phone: '+90 555 111 11 11',
-    },
-    {
-      id: 2,
-      name: 'Ayse',
-      email: 'ayse@example.com',
-      phone: '+90 555 222 22 22',
-    },
-  ];
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) { }
 
-  findAll(): User[] {
-    return this.users;
+  findAll() {
+    return this.userRepository.find();
   }
 
-  findOne(id: number): User {
-    const user = this.users.find((user) => user.id === id);
+  findOne(id: number) {
+    const user = this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı!');
     }
     return user;
   }
 
-  create(createUserDto: CreateUserDto): User {
-    const newUser: User = {
-      id: this.users.length + 1,
-      ...createUserDto,
-    };
-
-    this.users.push(newUser);
-    return newUser;
+  create(createUserDto: CreateUserDto) {
+    return this.userRepository.save(createUserDto);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): User {
-    const user = this.findOne(id);
-    Object.assign(user, updateUserDto);
-    return user;
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number): User {
+  remove(id: number) {
     const user = this.findOne(id);
-    this.users = this.users.filter((item) => item.id !== id);
+    this.userRepository.delete(id);
     return user;
   }
 }
