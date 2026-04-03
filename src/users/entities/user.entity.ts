@@ -16,7 +16,7 @@ export class User {
   @Column()
   phone: string;
 
-  @Column({ select: false })
+  @Column({ select: false, nullable: true }) // Geçici olarak nullable: true (eski kayıtların patlamaması için)
   password: string;
 
   @OneToMany(() => Comment, (comment) => comment.user)
