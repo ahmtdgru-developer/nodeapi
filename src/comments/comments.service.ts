@@ -12,8 +12,13 @@ export class CommentsService {
     private readonly commentRepository: Repository<Comment>,
   ) {}
 
-  async create(createCommentDto: CreateCommentDto) {
-    return await this.commentRepository.save(createCommentDto);
+  async create(createCommentDto: CreateCommentDto, userId: number) {
+    const comment = this.commentRepository.create({
+      ...createCommentDto,
+      user: { id: userId } as any,
+      post: { id: createCommentDto.postId } as any,
+    });
+    return await this.commentRepository.save(comment);
   }
 
   async findAll() {

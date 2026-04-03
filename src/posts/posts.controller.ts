@@ -1,9 +1,10 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { Post as PostEntity } from './entities/post.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Public } from '../auth/decorators/public.decorator';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @ApiBearerAuth()
 @ApiTags('posts')
@@ -26,7 +27,20 @@ export class PostsController {
   }
 
   @Post()
-  async create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
-    return await this.postsService.create(createPostDto);
+  async create(
+    @Body() createPostDto: CreatePostDto,
+    @GetUser('id') userId: number,
+  ): Promise<PostEntity> {
+    return await this.postsService.create(createPostDto, userId);
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updatePostDto: any) {
+    return await this.postsService.update(Number(id), updatePostDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.postsService.remove(Number(id));
   }
 }

@@ -22,11 +22,4 @@ export class CreateCommentDto {
     })
     @IsNumber({}, { message: 'post id sayısal bir değer olmalı' })
     postId: number;
-
-    @ApiProperty({
-        description: 'Yorumun user id',
-        example: 1,
-    })
-    @IsNumber({}, { message: 'user id sayısal bir değer olmalı' })
-    userId: number;
 }

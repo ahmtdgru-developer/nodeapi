@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "c1a2b3c4-d5e6-4f7g-8h9i-0j1k2l3m4n5o",
-		"name": "NestJS API - Senior Auth Collection",
-		"description": "NestJS, TypeORM ve JWT tabanlı API koleksiyonu. Otomatik token yönetimi içerir.",
+		"name": "NestJS API - Senior Auth Collection (v2)",
+		"description": "NestJS, TypeORM ve JWT tabanlı API koleksiyonu. Otomatik token yönetimi ve akıllı userId kullanımı içerir.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -19,7 +19,6 @@
 									"var jsonData = pm.response.json();",
 									"if (jsonData.access_token) {",
 									"    pm.collectionVariables.set(\"jwt_token\", jsonData.access_token);",
-									"    console.log(\"Token updated successfully!\");",
 									"}"
 								],
 								"type": "text/javascript"
@@ -47,10 +46,8 @@
 								"auth",
 								"login"
 							]
-						},
-						"description": "Kullanıcı girişi yapar ve jwt_token değişkenini günceller."
-					},
-					"response": []
+						}
+					}
 				}
 			]
 		},
@@ -79,10 +76,8 @@
 							"path": [
 								"users"
 							]
-						},
-						"description": "Yeni kullanıcı kaydı oluşturur."
-					},
-					"response": []
+						}
+					}
 				},
 				{
 					"name": "Get All Users (Protected)",
@@ -108,8 +103,34 @@
 								"users"
 							]
 						}
-					},
-					"response": []
+					}
+				},
+				{
+					"name": "Get User Detail (Protected)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					}
 				}
 			]
 		},
@@ -130,8 +151,7 @@
 								"posts"
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Create Post (Protected)",
@@ -150,7 +170,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Postman Post\",\n    \"content\": \"Postman ile oluşturulan içerik\",\n    \"userId\": 1\n}",
+							"raw": "{\n    \"title\": \"Yeni Post\",\n    \"content\": \"Bu post otomatik userId ile oluşturuldu!\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -165,9 +185,101 @@
 							"path": [
 								"posts"
 							]
+						},
+						"description": "Artık userId göndermene gerek yok, token'dan otomatik alınır!"
+					}
+				},
+				{
+					"name": "Update Post (Protected)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Güncellenmiş Başlık\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/posts/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								"1"
+							]
 						}
-					},
-					"response": []
+					}
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Create Comment (Protected)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Harika Post\",\n    \"content\": \"Çok bilgilendirici olmuş, eline sağlık!\",\n    \"postId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Comments (Public)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					}
 				}
 			]
 		}

@@ -4,6 +4,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @ApiBearerAuth()
 @ApiTags('comments')
@@ -12,8 +13,11 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
   @Post()
-  async create(@Body() createCommentDto: CreateCommentDto) {
-    return await this.commentsService.create(createCommentDto);
+  async create(
+    @Body() createCommentDto: CreateCommentDto,
+    @GetUser('id') userId: number,
+  ) {
+    return await this.commentsService.create(createCommentDto, userId);
   }
 
   @Public()
