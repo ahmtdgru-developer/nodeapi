@@ -1,7 +1,8 @@
-import { ClassSerializerInterceptor, Controller, Get, Param, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { Post as PostEntity } from './entities/post.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -18,5 +19,10 @@ export class PostsController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<PostEntity> {
     return await this.postsService.findOne(Number(id));
+  }
+
+  @Post()
+  async create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
+    return await this.postsService.create(createPostDto);
   }
 }
