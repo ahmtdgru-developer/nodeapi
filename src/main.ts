@@ -15,9 +15,10 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Node API Örneği')              // API Başlığı
     .setDescription('API dokümantasyonu açıklaması')   // Açıklama
-    .setVersion('1.0')                       // Versiyon
-    .addTag('users')                         // Etiketler (İstersen)
+    .setVersion('1.0')
+    .addTag('users')
     .addTag('comments')
+    .addBearerAuth() // <-- Token ile test imkanı!
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // Swagger hangi adreste çalışsın? biz 'api' dedik

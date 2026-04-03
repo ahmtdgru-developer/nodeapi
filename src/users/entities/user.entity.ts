@@ -10,11 +10,14 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   phone: string;
+
+  @Column({ select: false })
+  password: string;
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];

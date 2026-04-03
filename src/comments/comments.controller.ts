@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from '../auth/decorators/public.decorator';
 
+@ApiBearerAuth()
 @ApiTags('comments')
 @Controller('comments')
 export class CommentsController {
@@ -14,11 +16,13 @@ export class CommentsController {
     return await this.commentsService.create(createCommentDto);
   }
 
+  @Public()
   @Get()
   async findAll() {
     return await this.commentsService.findAll();
   }
 
+  @Public()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.commentsService.findOne(+id);

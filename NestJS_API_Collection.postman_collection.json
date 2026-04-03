@@ -1,18 +1,76 @@
 {
 	"info": {
-		"_postman_id": "f5e9d9e6-7b8c-4f1e-9e8d-8c1e2f3a4b5c",
-		"name": "NestJS NodeAPI",
+		"_postman_id": "c1a2b3c4-d5e6-4f7g-8h9i-0j1k2l3m4n5o",
+		"name": "NestJS API - Senior Auth Collection",
+		"description": "NestJS, TypeORM ve JWT tabanlı API koleksiyonu. Otomatik token yönetimi içerir.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set(\"jwt_token\", jsonData.access_token);",
+									"    console.log(\"Token updated successfully!\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ahmet@example.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Kullanıcı girişi yapar ve jwt_token değişkenini günceller."
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Users",
 			"item": [
 				{
-					"name": "Get All Users",
+					"name": "Register (Public)",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Ahmet Test\",\n    \"email\": \"ahmet@example.com\",\n    \"phone\": \"+905551111111\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{base_url}}/users",
 							"host": [
@@ -21,42 +79,26 @@
 							"path": [
 								"users"
 							]
-						}
+						},
+						"description": "Yeni kullanıcı kaydı oluşturur."
 					},
 					"response": []
 				},
 				{
-					"name": "Get User Detail",
+					"name": "Get All Users (Protected)",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create User",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Ahmet Doğru\",\n    \"email\": \"ahmet@example.com\",\n    \"phone\": \"+905551112233\"\n}",
-							"options": {
-								"照顾": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{base_url}}/users",
 							"host": [
@@ -75,7 +117,7 @@
 			"name": "Posts",
 			"item": [
 				{
-					"name": "Get All Posts",
+					"name": "Get All Posts (Public)",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -92,13 +134,23 @@
 					"response": []
 				},
 				{
-					"name": "Create Post",
+					"name": "Create Post (Protected)",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"NestJS ile API Geliştirme\",\n    \"content\": \"Bu harika bir NestJS postudur.\",\n    \"userId\": 1\n}",
+							"raw": "{\n    \"title\": \"Postman Post\",\n    \"content\": \"Postman ile oluşturulan içerik\",\n    \"userId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,64 +170,16 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "Comments",
-			"item": [
-				{
-					"name": "Create Comment",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"Harika Paylaşım\",\n    \"content\": \"Ellerine sağlık çok faydalı olmuş.\",\n    \"postId\": 1,\n    \"userId\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/comments",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"comments"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
 		}
 	],
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:3000",
-			"type": "string"
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
 		}
 	]
 }

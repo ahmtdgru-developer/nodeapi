@@ -1,4 +1,4 @@
-﻿import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
@@ -7,23 +7,31 @@ export class CreateUserDto {
     description: 'Kullanıcının adı',
     example: 'Ahmet',
   })
-
   @IsString({ message: 'isim metin tipinde olmalı' })
   @IsNotEmpty({ message: 'isim boş bırakılamaz' })
   name: string;
 
   @ApiProperty({
     description: 'Kullanıcının e-posta adresi',
-    example: 'Email Adresi'
+    example: 'ahmet@example.com'
   })
-
   @IsEmail({}, { message: 'geçerli bir e-posta adresi girilmeli' })
   email: string;
 
   @ApiProperty({
     description: 'Kullanıcının telefon numarası',
-    example: '+90 555 111 11 11',
+    example: '+905551111111',
   })
   @IsPhoneNumber('TR', { message: 'geçerli bir telefon numarası girilmeli' })
   phone: string;
+
+  @ApiProperty({
+    description: 'Kullanıcının şifresi',
+    example: 'password123',
+    minLength: 6,
+  })
+  @IsString({ message: 'şifre metin tipinde olmalı' })
+  @IsNotEmpty({ message: 'şifre boş bırakılamaz' })
+  @MinLength(6, { message: 'şifre en az 6 karakter olmalı' })
+  password: string;
 }
