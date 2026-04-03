@@ -2,5 +2,5 @@ import { PartialType, OmitType } from '@nestjs/swagger';
 import { CreateCommentDto } from './create-comment.dto';
 
 export class UpdateCommentDto extends PartialType(
-    OmitType(CreateCommentDto, ['userId', 'postId'] as const),
+    OmitType(CreateCommentDto, ['postId'] as const),
 ) { }

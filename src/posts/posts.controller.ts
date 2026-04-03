@@ -3,6 +3,7 @@ import { PostsService } from './posts.service';
 import { Post as PostEntity } from './entities/post.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { Public } from '../auth/decorators/public.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 
@@ -35,7 +36,10 @@ export class PostsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updatePostDto: any) {
+  async update(
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
     return await this.postsService.update(Number(id), updatePostDto);
   }
 
