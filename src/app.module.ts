@@ -31,7 +31,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false, // Üretimde false olmalı!
+        synchronize: true, // Şema güncellenmesi için geçici olarak true yapıldı (password sütunu vb.)
       }),
     }),
   ],
