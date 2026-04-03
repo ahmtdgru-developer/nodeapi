@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Comment } from "../../comments/entities/comment.entity";
+import { RespCommentDto } from "../../comments/dto/resp-comment.dto";
 
 export class UserDetailDto {
   @ApiProperty({
@@ -28,7 +28,7 @@ export class UserDetailDto {
 
   @ApiProperty({
     description: 'Kullanıcının yorumları',
-    example: [],
+    type: [RespCommentDto],
   })
-  comments: Comment[];
+  comments: RespCommentDto[];
 }

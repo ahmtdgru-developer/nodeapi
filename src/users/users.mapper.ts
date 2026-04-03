@@ -2,6 +2,7 @@ import { UserDetailDto } from './dto/user-detail.dto';
 import { UserListItemDto } from './dto/user-list-item.dto';
 import { UserPublicProfileDto } from './dto/user-public-profile.dto';
 import { User } from './entities/user.entity';
+import { RespCommentDto } from '../comments/dto/resp-comment.dto';
 
 export class UsersMapper {
   static toListItem(user: User): UserListItemDto {
@@ -23,7 +24,13 @@ export class UsersMapper {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      comments: user.comments,
+      comments: user.comments
+        ? user.comments.map((comment) => {
+          const commentDto = new RespCommentDto();
+          commentDto.text = comment.content;
+          return commentDto;
+        })
+        : [],
     };
   }
 

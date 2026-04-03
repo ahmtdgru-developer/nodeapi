@@ -1,23 +1,32 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../../users/entities/user.entity";
+import { Comment } from "../../comments/entities/comment.entity";
+import { Exclude, Expose } from "class-transformer";
 
-export class PostEntity {
+@Entity('posts')
+export class Post {
+  @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
   title: string;
+
+  @Column()
   content: string;
 
-  // Bu alanı API'den dışarı gizliyoruz (JSON'da görünmeyecek)
-  @Exclude()
-  authorId: number;
+  @ManyToOne(() => User, (user) => user.posts)
+  user: User;
+
+  @Column({ nullable: true })
+  userId: number;
+
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
 
   @Exclude()
+  @Column({ default: false })
   isDeleted: boolean;
 
-  // class-transformer'ın çalışması için dönen objeler bu Entity sınıfının bir kopyası (instance'ı) olmalıdır.
-  constructor(partial: Partial<PostEntity>) {
-    Object.assign(this, partial);
-  }
-
-  // Veritabanında olmayan ama JSON çıktısına otomatik özel bir değer eklemek için @Expose() kullanabiliriz
   @Expose()
   get summary(): string {
     return this.content ? this.content.substring(0, 15) + '...' : '';

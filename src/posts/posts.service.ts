@@ -1,31 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PostEntity } from './entities/post.entity';
+import { Post } from './entities/post.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PostsService {
-  private posts: PostEntity[] = [
-    new PostEntity({
-      id: 1,
-      title: 'İlk Gönderimiz',
-      content: 'Bu örnek bir gönderi içeriğidir, class-transformer ile test ediyoruz.',
-      authorId: 99, // Gizli
-      isDeleted: false,
-    }),
-    new PostEntity({
-      id: 2,
-      title: 'Harika bir Mimari',
-      content: 'Bugün NestJS ClassSerializerInterceptor öğreniyorum!',
-      authorId: 101, // Gizli
-      isDeleted: false,
-    }),
-  ];
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+  ) { }
 
-  findAll(): PostEntity[] {
-    return this.posts.filter((post) => !post.isDeleted);
+  findAll() {
+    return this.postRepository.find({
+      where: { isDeleted: false },
+      relations: ['user', 'comments'],
+    });
   }
 
-  findOne(id: number): PostEntity {
-    const post = this.posts.find((p) => p.id === id && !p.isDeleted);
+  async findOne(id: number) {
+    const post = await this.postRepository.findOne({
+      where: { id, isDeleted: false },
+      relations: ['user', 'comments'],
+    });
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
