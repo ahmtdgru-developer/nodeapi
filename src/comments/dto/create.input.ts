@@ -1,7 +1,7 @@
 import { IsNumber, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateCommentDto {
+export class CreateCommentInput {
     @ApiProperty({
         description: 'Yorumun başlığı',
         example: 'Yorum Başlığı',

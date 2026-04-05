@@ -1,11 +1,11 @@
-import { UserDetailDto } from './dto/user-detail.dto';
-import { UserListItemDto } from './dto/user-list-item.dto';
-import { UserPublicProfileDto } from './dto/user-public-profile.dto';
+import { UserDetailOutput } from './dto/detail.output';
+import { UserListItemOutput } from './dto/list.output';
+import { UserPublicProfileOutput } from './dto/public-profile.output';
 import { User } from './entities/user.entity';
-import { RespCommentDto } from '../comments/dto/resp-comment.dto';
+import { CommentResponseOutput } from '../comments/dto/resp.output';
 
 export class UsersMapper {
-  static toListItem(user: User): UserListItemDto {
+  static toListItem(user: User): UserListItemOutput {
     return {
       id: user.id,
       name: user.name,
@@ -14,11 +14,11 @@ export class UsersMapper {
     };
   }
 
-  static toList(users: User[]): UserListItemDto[] {
+  static toList(users: User[]): UserListItemOutput[] {
     return users.map((user) => UsersMapper.toListItem(user));
   }
 
-  static toDetail(user: User): UserDetailDto {
+  static toDetail(user: User): UserDetailOutput {
     return {
       id: user.id,
       name: user.name,
@@ -26,15 +26,15 @@ export class UsersMapper {
       phone: user.phone,
       comments: user.comments
         ? user.comments.map((comment) => {
-          const commentDto = new RespCommentDto();
-          commentDto.text = comment.content;
-          return commentDto;
+          const commentOutput = new CommentResponseOutput();
+          commentOutput.text = comment.content;
+          return commentOutput;
         })
         : [],
     };
   }
 
-  static toPublicProfile(user: User): UserPublicProfileDto {
+  static toPublicProfile(user: User): UserPublicProfileOutput {
     return {
       name: user.name,
     };

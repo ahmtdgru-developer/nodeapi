@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CreateCommentInput } from './dto/create.input';
+import { UpdateCommentInput } from './dto/update.input';
 import { Comment } from './entities/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,11 +12,11 @@ export class CommentsService {
     private readonly commentRepository: Repository<Comment>,
   ) {}
 
-  async create(createCommentDto: CreateCommentDto, userId: number) {
+  async create(createCommentInput: CreateCommentInput, userId: number) {
     const comment = this.commentRepository.create({
-      ...createCommentDto,
+      ...createCommentInput,
       user: { id: userId } as any,
-      post: { id: createCommentDto.postId } as any,
+      post: { id: createCommentInput.postId } as any,
     });
     return await this.commentRepository.save(comment);
   }
@@ -33,9 +33,9 @@ export class CommentsService {
     return comment;
   }
 
-  async update(id: number, updateCommentDto: UpdateCommentDto) {
+  async update(id: number, updateCommentInput: UpdateCommentInput) {
     await this.findOne(id);
-    return await this.commentRepository.update(id, updateCommentDto);
+    return await this.commentRepository.update(id, updateCommentInput);
   }
 
   async remove(id: number) {

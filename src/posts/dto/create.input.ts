@@ -1,7 +1,8 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreatePostDto {
+export class CreatePostInput {
+    @ApiProperty({ description: 'Başlık' })
     @IsString({ message: 'Başlık bir metin olmalıdır.' })
     @IsNotEmpty({ message: 'Başlık alanı zorunludur.' })
     title: string;

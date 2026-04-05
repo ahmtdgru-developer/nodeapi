@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserInput } from './dto/create.input';
+import { UpdateUserInput } from './dto/update.input';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -35,15 +35,15 @@ export class UsersService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto) {
-    const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+  async create(createUserInput: CreateUserInput) {
+    const existingUser = await this.userRepository.findOne({ where: { email: createUserInput.email } });
     if (existingUser) {
       throw new ConflictException('Bu e-posta adresi zaten kullanımda!');
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(createUserInput.password, 10);
     const newUser = this.userRepository.create({
-      ...createUserDto,
+      ...createUserInput,
       password: hashedPassword,
     });
 
@@ -51,9 +51,9 @@ export class UsersService {
     return savedUser; // Mapper controller bazında handle edilecek zaten
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserInput: UpdateUserInput) {
     await this.findOne(id); // Önce kullanıcı var mı diye bakıyoruz (asenkron)
-    return await this.userRepository.update(id, updateUserDto);
+    return await this.userRepository.update(id, updateUserInput);
   }
 
   async remove(id: number) {

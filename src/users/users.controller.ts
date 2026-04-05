@@ -7,11 +7,11 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserDetailDto } from './dto/user-detail.dto';
-import { UserListItemDto } from './dto/user-list-item.dto';
-import { UserPublicProfileDto } from './dto/user-public-profile.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserInput } from './dto/create.input';
+import { UserDetailOutput } from './dto/detail.output';
+import { UserListItemOutput } from './dto/list.output';
+import { UserPublicProfileOutput } from './dto/public-profile.output';
+import { UpdateUserInput } from './dto/update.input';
 import { UsersMapper } from './users.mapper';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -24,43 +24,43 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get()
-  async findAll(): Promise<UserListItemDto[]> {
+  async findAll(): Promise<UserListItemOutput[]> {
     const users = await this.usersService.findAll();
     return UsersMapper.toList(users);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserDetailDto> {
+  async findOne(@Param('id') id: string): Promise<UserDetailOutput> {
     const user = await this.usersService.findOne(Number(id));
     return UsersMapper.toDetail(user);
   }
 
   @Public()
   @Get(':id/public')
-  async findPublicProfile(@Param('id') id: string): Promise<UserPublicProfileDto> {
+  async findPublicProfile(@Param('id') id: string): Promise<UserPublicProfileOutput> {
     const user = await this.usersService.findOne(Number(id));
     return UsersMapper.toPublicProfile(user);
   }
 
   @Public() // Register
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserDetailDto> {
-    const user = await this.usersService.create(createUserDto);
+  async create(@Body() createUserInput: CreateUserInput): Promise<UserDetailOutput> {
+    const user = await this.usersService.create(createUserInput);
     return UsersMapper.toDetail(user);
   }
 
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserDetailDto> {
-    await this.usersService.update(Number(id), updateUserDto);
+    @Body() updateUserInput: UpdateUserInput,
+  ): Promise<UserDetailOutput> {
+    await this.usersService.update(Number(id), updateUserInput);
     const user = await this.usersService.findOne(Number(id));
     return UsersMapper.toDetail(user);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<UserDetailDto> {
+  async remove(@Param('id') id: string): Promise<UserDetailOutput> {
     const user = await this.usersService.remove(Number(id));
     return UsersMapper.toDetail(user);
   }

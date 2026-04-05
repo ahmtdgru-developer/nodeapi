@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { RespCommentDto } from "../../comments/dto/resp-comment.dto";
 
-export class UserDetailDto {
+export class UserListItemOutput {
   @ApiProperty({
     description: 'Kullanıcının ID',
     example: 1,
@@ -15,20 +14,14 @@ export class UserDetailDto {
   name: string;
 
   @ApiProperty({
-    description: 'Kullanıcının e-posta adresi',
-    example: 'Email Adresi',
-  })
-  email: string;
-
-  @ApiProperty({
     description: 'Kullanıcının telefon numarası',
     example: '+90 555 111 11 11',
   })
   phone: string;
 
   @ApiProperty({
-    description: 'Kullanıcının yorumları',
-    type: [RespCommentDto],
+    description: 'Kullanıcının e-posta adresi',
+    example: 'Email Adresi',
   })
-  comments: RespCommentDto[];
+  email: string;
 }

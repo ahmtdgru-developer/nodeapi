@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CreateCommentInput } from './dto/create.input';
+import { UpdateCommentInput } from './dto/update.input';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -14,10 +14,10 @@ export class CommentsController {
 
   @Post()
   async create(
-    @Body() createCommentDto: CreateCommentDto,
+    @Body() createCommentInput: CreateCommentInput,
     @GetUser('id') userId: number,
   ) {
-    return await this.commentsService.create(createCommentDto, userId);
+    return await this.commentsService.create(createCommentInput, userId);
   }
 
   @Public()
@@ -33,8 +33,8 @@ export class CommentsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return await this.commentsService.update(+id, updateCommentDto);
+  async update(@Param('id') id: string, @Body() updateCommentInput: UpdateCommentInput) {
+    return await this.commentsService.update(+id, updateCommentInput);
   }
 
   @Delete(':id')

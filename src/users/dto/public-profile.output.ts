@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UserPublicProfileDto {
+export class UserPublicProfileOutput {
   @ApiProperty({
     description: 'Kullanıcının adı',
     example: 'Ahmet',
