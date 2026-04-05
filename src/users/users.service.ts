@@ -5,12 +5,14 @@ import { UpdateUserInput } from './dto/update.input';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CacheService } from '../common/cache/cache.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly cacheService: CacheService,
   ) { }
 
   findAll() {
@@ -48,17 +50,21 @@ export class UsersService {
     });
 
     const savedUser = await this.userRepository.save(newUser);
+    await this.cacheService.bumpVersions(['users', 'posts']);
     return savedUser; // Mapper controller bazında handle edilecek zaten
   }
 
   async update(id: number, updateUserInput: UpdateUserInput) {
     await this.findOne(id); // Önce kullanıcı var mı diye bakıyoruz (asenkron)
-    return await this.userRepository.update(id, updateUserInput);
+    const result = await this.userRepository.update(id, updateUserInput);
+    await this.cacheService.bumpVersions(['users', 'posts']);
+    return result;
   }
 
   async remove(id: number) {
     const user = await this.findOne(id); // Önce kullanıcıyı buluyoruz (asenkron)
     await this.userRepository.delete(id);
+    await this.cacheService.bumpVersions(['users', 'posts']);
     return user;
   }
 }

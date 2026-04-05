@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CommentsService } from './comments.service';
 import { Comment } from './entities/comment.entity';
+import { CacheService } from '../common/cache/cache.service';
 
 describe('CommentsService', () => {
   let service: CommentsService;
@@ -19,6 +20,12 @@ describe('CommentsService', () => {
             save: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: CacheService,
+          useValue: {
+            bumpVersions: jest.fn(),
           },
         },
       ],

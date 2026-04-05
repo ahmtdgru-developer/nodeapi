@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { CacheService } from '../common/cache/cache.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -17,6 +19,20 @@ describe('UsersController', () => {
             create: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn(),
+          },
+        },
+        {
+          provide: CacheService,
+          useValue: {
+            get: jest.fn(),
+            getVersion: jest.fn(),
+            set: jest.fn(),
           },
         },
       ],

@@ -6,7 +6,8 @@ import { CreatePostInput } from './dto/create.input';
 import { UpdatePostInput } from './dto/update.input';
 import { Public } from '../auth/decorators/public.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
-import { PostsCacheInterceptor } from './interceptors/posts-cache.interceptor';
+import { VersionedCacheInterceptor } from '../common/cache/versioned-cache.interceptor';
+import { CacheResource } from '../common/cache/cache.decorators';
 
 @ApiBearerAuth()
 @ApiTags('posts')
@@ -16,14 +17,16 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Public()
-  @UseInterceptors(PostsCacheInterceptor)
+  @CacheResource({ namespace: 'posts', ttlEnvVar: 'POSTS_CACHE_TTL_MS' })
+  @UseInterceptors(VersionedCacheInterceptor)
   @Get()
   async findAll(): Promise<PostEntity[]> {
     return await this.postsService.findAll();
   }
 
   @Public()
-  @UseInterceptors(PostsCacheInterceptor)
+  @CacheResource({ namespace: 'posts', ttlEnvVar: 'POSTS_CACHE_TTL_MS' })
+  @UseInterceptors(VersionedCacheInterceptor)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<PostEntity> {
     return await this.postsService.findOne(Number(id));

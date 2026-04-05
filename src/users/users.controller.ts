@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserInput } from './dto/create.input';
 import { UserDetailOutput } from './dto/detail.output';
@@ -16,6 +17,8 @@ import { UsersMapper } from './users.mapper';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
+import { VersionedCacheInterceptor } from '../common/cache/versioned-cache.interceptor';
+import { CacheResource } from '../common/cache/cache.decorators';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -23,12 +26,16 @@ import { Public } from '../auth/decorators/public.decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
+  @CacheResource({ namespace: 'users', ttlEnvVar: 'USERS_CACHE_TTL_MS' })
+  @UseInterceptors(VersionedCacheInterceptor)
   @Get()
   async findAll(): Promise<UserListItemOutput[]> {
     const users = await this.usersService.findAll();
     return UsersMapper.toList(users);
   }
 
+  @CacheResource({ namespace: 'users', ttlEnvVar: 'USERS_CACHE_TTL_MS' })
+  @UseInterceptors(VersionedCacheInterceptor)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<UserDetailOutput> {
     const user = await this.usersService.findOne(Number(id));
@@ -36,6 +43,8 @@ export class UsersController {
   }
 
   @Public()
+  @CacheResource({ namespace: 'users', ttlEnvVar: 'USERS_CACHE_TTL_MS' })
+  @UseInterceptors(VersionedCacheInterceptor)
   @Get(':id/public')
   async findPublicProfile(@Param('id') id: string): Promise<UserPublicProfileOutput> {
     const user = await this.usersService.findOne(Number(id));

@@ -1,17 +1,17 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Post } from './entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePostInput } from './dto/create.input';
 import { UpdatePostInput } from './dto/update.input';
-import { PostsCacheService } from './posts-cache.service';
+import { CacheService } from '../common/cache/cache.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
-    private readonly postsCacheService: PostsCacheService,
+    private readonly cacheService: CacheService,
   ) { }
 
   findAll() {
@@ -38,14 +38,14 @@ export class PostsService {
       user: { id: userId } as any, // User entity'sine ID ile bağladık
     });
     const savedPost = await this.postRepository.save(post);
-    await this.postsCacheService.bumpVersion();
+    await this.cacheService.bumpVersions(['posts']);
     return savedPost;
   }
 
   async update(id: number, updatePostInput: UpdatePostInput) {
     await this.findOne(id);
     const result = await this.postRepository.update(id, updatePostInput);
-    await this.postsCacheService.bumpVersion();
+    await this.cacheService.bumpVersions(['posts']);
     return result;
   }
 
@@ -53,7 +53,7 @@ export class PostsService {
     const post = await this.findOne(id);
     post.isDeleted = true;
     const deletedPost = await this.postRepository.save(post);
-    await this.postsCacheService.bumpVersion();
+    await this.cacheService.bumpVersions(['posts']);
     return deletedPost;
   }
 }

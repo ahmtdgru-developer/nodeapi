@@ -4,12 +4,14 @@ import { UpdateCommentInput } from './dto/update.input';
 import { Comment } from './entities/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CacheService } from '../common/cache/cache.service';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createCommentInput: CreateCommentInput, userId: number) {
@@ -18,7 +20,9 @@ export class CommentsService {
       user: { id: userId } as any,
       post: { id: createCommentInput.postId } as any,
     });
-    return await this.commentRepository.save(comment);
+    const savedComment = await this.commentRepository.save(comment);
+    await this.cacheService.bumpVersions(['comments', 'posts', 'users']);
+    return savedComment;
   }
 
   async findAll() {
@@ -35,12 +39,15 @@ export class CommentsService {
 
   async update(id: number, updateCommentInput: UpdateCommentInput) {
     await this.findOne(id);
-    return await this.commentRepository.update(id, updateCommentInput);
+    const result = await this.commentRepository.update(id, updateCommentInput);
+    await this.cacheService.bumpVersions(['comments', 'posts', 'users']);
+    return result;
   }
 
   async remove(id: number) {
     const comment = await this.findOne(id);
     await this.commentRepository.delete(id);
+    await this.cacheService.bumpVersions(['comments', 'posts', 'users']);
     return comment;
   }
 }

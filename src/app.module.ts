@@ -11,9 +11,12 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CacheModule } from '@nestjs/cache-manager';
 import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
+import { AppCacheModule } from './common/cache/cache.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
+    AppCacheModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -35,6 +38,7 @@ import KeyvRedis from '@keyv/redis';
     PostsModule,
     CommentsModule,
     AuthModule,
+    HealthModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
