@@ -1,5 +1,4 @@
 import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { PostsService } from './posts.service';
 import { Post as PostEntity } from './entities/post.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -7,6 +6,7 @@ import { CreatePostInput } from './dto/create.input';
 import { UpdatePostInput } from './dto/update.input';
 import { Public } from '../auth/decorators/public.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { PostsCacheInterceptor } from './interceptors/posts-cache.interceptor';
 
 @ApiBearerAuth()
 @ApiTags('posts')
@@ -16,14 +16,14 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Public()
-  @UseInterceptors(CacheInterceptor) // Sadece bu endpoint cache'lenecek
+  @UseInterceptors(PostsCacheInterceptor)
   @Get()
   async findAll(): Promise<PostEntity[]> {
     return await this.postsService.findAll();
   }
 
   @Public()
-  @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(PostsCacheInterceptor)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<PostEntity> {
     return await this.postsService.findOne(Number(id));

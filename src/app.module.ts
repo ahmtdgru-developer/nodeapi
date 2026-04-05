@@ -23,6 +23,7 @@ import KeyvRedis from '@keyv/redis';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
+        ttl: Number(config.get<string>('CACHE_TTL_MS') ?? 60_000),
         stores: [
           new Keyv({
             store: new KeyvRedis(config.get('REDIS_URL')),
